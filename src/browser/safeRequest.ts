@@ -9,7 +9,7 @@ const fetchViaExtension = async (url: string, headers: Record<string, string>): 
     headers
   });
   if (!result || result.error) {
-    throw new SafeRequestError((result && result.error) || 'Background request failed');
+    throw new SafeRequestError(result?.error || 'Background request failed');
   }
 
   const binary = atob(result.body);
@@ -36,9 +36,7 @@ const safeRequest = async (url: string, headers = {}, triesLeft = 10) => {
     // Content scripts obey the page's CORS policy, even with host permissions.
     // Retry only Boomstream CDN requests from the extension service worker.
     const target = new URL(url);
-    if (!(error instanceof TypeError) ||
-        target.protocol !== 'https:' ||
-        !target.hostname.endsWith('.boomstream.com')) {
+    if (!(error instanceof TypeError) || !target.hostname.endsWith('.boomstream.com')) {
       throw error;
     }
     resp = await fetchViaExtension(url, headers);
