@@ -34,8 +34,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return;
   }
 
-  if (!sender.tab || sender.id !== chrome.runtime.id ||
-      url.protocol !== 'https:' || !url.hostname.endsWith('.boomstream.com')) {
+  if (!sender.tab || url.protocol !== 'https:' || !url.hostname.endsWith('.boomstream.com')) {
     sendResponse({ error: 'Segment URL is not permitted' });
     return;
   }
@@ -44,8 +43,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     try {
       const response = await fetch(url.href, {
         method: 'GET',
-        headers: message.headers,
-        credentials: 'include'
+        headers: message.headers
       });
       const bytes = new Uint8Array(await response.arrayBuffer());
       const parts: string[] = [];
